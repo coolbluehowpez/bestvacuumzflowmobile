@@ -1,0 +1,103 @@
+<?php
+/**
+ * Outsource Online Captcha Extension
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is bundled with this package in the file LICENSE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * @category   Outsource Online
+ * @package    OutsourceOnline_Captcha
+ * @author     Sreekanth Dayanand
+ * @copyright  Copyright (c) 2010 Outsource Online. (http://www.outsource-online.net)
+ * @license    http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+?>
+
+<h2><?php echo Mage::helper('contacts')->__('Contact Best Vacuum') ?></h2>
+<div class="content-main-contact">
+    <div class="section-left">
+        <div class="forms-section clearfix">
+            <form action="captcha/contacts/post" id="contactForm" method="post" onSubmit="return checkOSOLCaptcha(contactForm);">
+                <fieldset>
+                    <h3 class="conact-h3">How can we help?</h3>		
+                    <ul class="contact-form-list">
+                        <li>
+                            <div class="input-box">
+                                <span class="required">*</span>
+                                <input name="name" id="name" title="<?php echo Mage::helper('contacts')->__('First Name') ?>" value="<?php if (! Mage::getSingleton('customer/session')->isLoggedIn()): echo $this->__('Your name...'); else: echo $this->htmlEscape($this->helper('contacts')->getUserName()); endif; ?>" class="input-text required-entry" type="text" />
+                            </div> 
+                        </li>
+                        <li>
+                        <span class="required">*</span>
+                            <input name="email" id="email" title="<?php echo Mage::helper('contacts')->__('Email') ?>" value="<?php if (! Mage::getSingleton('customer/session')->isLoggedIn()): echo $this->__('Your email...'); else: echo $this->htmlEscape($this->helper('contacts')->getUserEmail()); endif; ?>" class="input-text required-entry validate-email" type="text" />
+                        </li>
+                        <li>
+                            <input name="telephone" id="telephone" title="<?php echo Mage::helper('contacts')->__('Telephone') ?>" value="<?php echo $this->__('Phone...'); ?>" class="input-text" type="text" />
+                        </li>
+                        <li>
+                        <span class="required">*</span>
+                            <input name="subject" id="subject" title="<?php echo Mage::helper('contacts')->__('Subject') ?>" value="<?php echo $this->__('Your subject...'); ?>" class="input-text" type="text" />
+                        </li>
+                        <li>
+                            <div class="input-box">
+                                <span class="required">*</span>
+                                <textarea name="comment" id="comment" title="<?php echo Mage::helper('contacts')->__('Comment') ?>" class="required-entry input-text" cols="5" rows="3"><?php echo $this->__('Your message...'); ?></textarea>
+                            </div>
+                        </li>
+                    </ul>
+                </fieldset>
+                <?php  // Captcha
+                    if( !(Mage::getStoreConfig("OutsourceOnline_Captcha/captcha/when_loggedin")  && (Mage::getSingleton('customer/session')->isLoggedIn())) )
+                    {
+                        if (Mage::getStoreConfig("OutsourceOnline_Captcha/captcha/contacts"))
+
+                            echo $this->getChildHtml('captcha_ajax_part');
+                    }
+                ?>
+                <div class="button-set">
+                    <div class="form-legend" style="margin-top: 12px;">
+                        <button class="contact-button" type="submit" title="<?php echo Mage::helper('contacts')->__('Submit') ?>"><?php echo Mage::helper('contacts')->__('Submit message') ?></button>
+                        <span class="red">*</span> - <?php echo Mage::helper('contacts')->__('Mandatory Field') ?>
+                        <input type="text" name="hideit" id="hideit" value="" style="display:none !important;" />
+                    </div>
+                </div>
+            </form>
+            <script type="text/javascript">
+                var contactForm = new VarienForm('contactForm', true);
+            </script>
+            <script type="text/javascript">
+//                elem = $("contactForm");
+//                elem.writeAttribute('action', '/thankyou');
+            </script>
+        </div>
+    </div>
+    <div class="section-right">
+        <a class="find-on-map" href="#inline1">Find on map</a>
+        <div class="contact-maps" id="inline1" style="width:960px;display: none;">
+
+            <h3><span>Lincoln Park Store:</span> 2646 N. Lincoln Ave.  Chicago, IL 60614  |  Phone: 888-205-3228</h3>
+            <div class="google-map">
+                <iframe width="960" height="420" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=sr&amp;geocode=&amp;q=2646+N.+Lincoln+Ave.++Chicago,+IL+60614&amp;aq=&amp;sll=41.889142,-87.794386&amp;sspn=0.006485,0.016512&amp;ie=UTF8&amp;hq=&amp;hnear=2646+N+Lincoln+Ave,+Chicago,+Cook,+Illinois+60614&amp;t=m&amp;ll=41.932422,-87.645493&amp;spn=0.026818,0.082312&amp;z=14&amp;iwloc=A&amp;output=embed"></iframe>
+            </div>
+            <h3><span>Oak Park Store:</span> 148 N. Oak Park Ave., Oak Park, IL 60301  |  Phone: 773.348.4500</h3>
+            <div class="google-map">
+                <iframe width="960" height="420" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="http://maps.google.com/maps?f=q&amp;source=s_q&amp;hl=sr&amp;geocode=&amp;q=148+N.+Oak+Park+Ave.,+Oak+Park,+IL+60301&amp;aq=&amp;sll=37.0625,-95.677068&amp;sspn=55.806079,135.263672&amp;ie=UTF8&amp;hq=&amp;hnear=148+N+Oak+Park+Ave,+Oak+Park,+Cook,+Illinois+60301&amp;t=m&amp;ll=41.889116,-87.794409&amp;spn=0.026836,0.082312&amp;z=14&amp;iwloc=A&amp;output=embed"></iframe>
+
+            </div>
+        </div>
+        <div class="local-customer">If You Are<br /> Local Customer, <a href="#">Click Here &gt;</a></div>
+        <h3>Call Us <br />1-888-205-3228</h3>
+        <p class="font-b">We're standing by to help out with everytihng from placing an order to assembling your new vacuum. Just call during regular business hours or email us anytime.</p>
+        <p class="font-b"><span>Email Us: </span><a href="mailto:service@bestvacuum.com">service@bestvacuum.com</a></p>
+        <p><span>Write Us: </span>2646 N. Lincoln Ave.  Chicago, IL 60614</p>
+        <p><span>Drop By our two store locations serving  Chicagoland:</span><br />2646 N. Lincoln Ave.  Chicago, IL 60614 <br/> 148 N. Oak Park Ave.  Oak Park, IL 60301</p>
+        <p><span>Hours: </span><br />Chicago: Mon - Sat 9am -6pm<br /> Oak Park: Mon -Sat 10am -5pm</p>
+    </div>
+</div>

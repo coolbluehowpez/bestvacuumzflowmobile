@@ -1,0 +1,183 @@
+<?php
+/**
+ * Magento Enterprise Edition
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Magento Enterprise Edition License
+ * that is bundled with this package in the file LICENSE_EE.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://www.magentocommerce.com/license/enterprise-edition
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     enterprise_iphone
+ * @copyright   Copyright (c) 2010 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://www.magentocommerce.com/license/enterprise-edition
+ */
+?>
+<?php
+/**
+ * Shopping cart template
+ *
+ * @see Mage_Checkout_Block_Cart
+ */
+?>
+<div class="cart">
+    <?php echo $this->getChildHtml('form_before') ?>
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    <?php if(!$this->hasError() && count($this->getItems()) > 1): ?>
+        <ul class="checkout-types">
+        <?php foreach ($this->getMethods('methods') as $method): ?>
+            <?php $methodHtml = $this->getMethodHtml($method); ?>
+            <?php if ($methodHtml): ?>
+            <li><?php echo $methodHtml; ?></li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    <form action="<?php echo $this->getUrl('checkout/cart/updatePost') ?>" method="post">
+        <fieldset>
+            <table id="shopping-cart-table" class="data-table cart-table">
+                <tfoot>
+                    <tr>
+                        <td colspan="2" class="a-right">
+                            <button type="submit" name="update_cart_action" value="update_qty" title="<?php echo $this->__('Update Shopping Cart'); ?>" class="fluid ui red button"><?php echo $this->__('Update Shopping Cart'); ?></button>
+                        </td>
+                    </tr>
+                </tfoot>
+                <tbody>
+                <?php foreach($this->getItems() as $_item): ?>
+                    <?php echo $this->getItemHtml($_item) ?>
+                <?php endforeach ?>
+                </tbody>
+            </table>
+        </fieldset>
+    </form>
+    <?php echo $this->getChildHtml('shopping.cart.table.after'); ?>
+    <?php echo $this->getChildHtml('crosssell') ?>
+    <div class="cart-collaterals<?php if($this->getChildHtml('crosssell')) echo ' cross-inside'; ?>">
+    
+<!-- Related products block START -->
+<div>
+<?php
+	$array_added_product = array();
+	$total_product= "";
+	$last_product= "";
+?>
+
+<?php foreach($this->getItems() as $_item):
+	$array_added_product[]=$_item->getProductId();?>
+<?php endforeach ?>
+
+<?php
+	//print_r($array_added_product);
+	$total_product=sizeof($array_added_product);
+	//echo "<br>".$total_product;
+	if($total_product > 0){
+		$last_product=$array_added_product[($total_product-1)];
+	}
+?>
+
+<?php
+	$nProducts = $total_product;
+	$_product = Mage::getModel('catalog/product')->load($total_product-1);
+	$ids = array();
+		while ((count($ids) < 5) && ($nProducts > 0)){
+			$nProducts --;
+			$last_product=$array_added_product[($nProducts)];
+			$_product1 = Mage::getModel('catalog/product')->load($last_product);
+
+			if (!$_product1->hasRelatedProductIds()) {
+				foreach ($_product1->getRelatedProducts() as $product) {
+					if (count($ids) < 5) $ids[] = $product->getId();
+					else break;
+				}
+				$_product->setRelatedProductIds($ids);
+			}
+		}
+?>
+
+<?php $product_per_row=2; //how many product show in a row ?>
+
+<table width="100%" align="center" cellpadding="0" cellspacing="0">
+<tr>
+	<td  width="100%" align="left" valign="middle" colspan="<?php echo $product_per_row; ?>"><h1>Related Items</h1></td>
+</tr>
+
+<?php
+$product_counter=0;
+foreach ($_product->getData('related_product_ids') as $r_productid) {
+$_product = Mage::getModel('catalog/product')->load($r_productid);
+?>
+
+<?php if(($product_counter%$product_per_row)==0){ ?>
+<tr>
+<?php } ?>
+
+<td valign="top" style="padding:15px;" width="21%">
+	<div>
+		<a href="<?php echo $_product->getProductUrl() ?>" style="text-decoration:none;margin-left:0px;text-align:center;">
+		<img src="<? echo Mage::helper('catalog/image')->init($_product, 'thumbnail')->resize(100, 100); ?>" alt="<?php echo $this->htmlEscape($_product['name']); ?>" border="0" width="100" />
+		</a>
+		<a href="<?php echo $_product->getProductUrl() ?>" style="text-decoration:none; font-size:12px; font-weight:bold; text-align:left; ">
+		<br />
+		<?php
+		if (strlen($this->helper('catalog/output')->productAttribute($_product, $_product->getName(), 'name')) > 32) {echo substr($this->helper('catalog/output')->productAttribute($_product, $_product->getName(), 'name'),0,32)."...";}
+		else echo $this->helper('catalog/output')->productAttribute($_product, $_product->getName(), 'name');
+		?>
+		</a>
+		
+		<div style="font-size: 11px; color: #D31D39; font-weight: bold; text-align: left;">
+		<?php $final_price= (float) $_product->getFinalPrice();
+		$final_price= number_format($final_price,2);
+		?>
+		<?php echo "$". $final_price; ?>
+		</div>
+		
+	</div>
+</td>
+<?php
+$product_counter++;
+if(($product_counter%$product_per_row)==0){
+?>
+</tr>
+<?php } ?>
+<?php } ?>
+</table>
+</div>
+<!-- Related products block END -->
+    
+        <div class="deals">
+            <?php /* Extensions placeholder */ ?>
+            <?php /*?><?php echo $this->getChildHtml('checkout.cart.extra') ?><?php */?>
+            <?php /*?><?php echo $this->getChildHtml('checkout_cart_widget') ?><?php */?>
+            <?php /*?><?php echo $this->getChildHtml('coupon') ?><?php */?>
+            <?php /*?><?php echo $this->getChildHtml('giftcards') ?><?php */?>
+            <?php /*?><?php echo $this->getChildHtml('giftregistry.cart.link') ?><?php */?>
+        </div>
+        <?php if (!$this->getIsVirtual()): echo $this->getChildHtml('shipping'); endif; ?>
+    </div>
+    <div class="totals">
+        <?php echo $this->getChildHtml('totals'); ?>
+    </div>
+    <?php if(!$this->hasError()): ?>
+        <ul class="checkout-types">
+        <?php foreach ($this->getMethods('methods') as $method): ?>
+            <?php $methodHtml = $this->getMethodHtml($method); ?>
+            <?php if ($methodHtml): ?>
+            <li><?php echo $methodHtml; ?></li>
+            <?php endif; ?>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+
+</div>

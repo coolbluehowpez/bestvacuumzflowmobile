@@ -1,0 +1,297 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_iphone
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ * MOBILE
+ */
+?>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php $_product = $this->getProduct(); ?>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+<div id="messages_product_view"><?php echo $this->getMessagesBlock()->getGroupedHtml() ?></div>
+<div class="product-view">
+    <form action="<?php echo $this->getSubmitUrl($_product) ?>" method="post" id="product_addtocart_form"<?php if($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+        <div class="no-display">
+            <input type="hidden" name="product" value="<?php echo $_product->getId() ?>" />
+            <input type="hidden" name="related_product" id="related-products-field" value="" />
+        </div>
+        <div class="product-essential s8-product">
+				<? $_attribute_ass = Mage::getModel('catalog/product')->load($_product->getId())->getAttributeText('best_assured');
+					if($_attribute_ass == 'Yes'): ?>
+					<div class="best-assured">
+					<a href="<?php echo $this->getUrl('buyers-assurance')?>"><img width="50px" src="<? echo $this->getSkinUrl('img/best-assured.png');  ?>" /></a>
+				</div>
+					<? endif;
+				?>
+                <div class="product-img-box">
+                    <?php echo $this->getChildHtml('media') ?>
+                </div>
+
+             
+                <div class="product-shop">
+                    <div class="product-main-info">
+                        <div class="product-name">
+                            <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+                        </div>
+                        <?php echo $this->getChildHtml('alert_urls') ?>
+
+
+                        <div id="s8-config">
+                            <ul class="selected-brush">
+                            <li></li>
+                        </ul>
+                                    <ul class="select-acc">
+                                    </ul>
+                        
+                        
+
+                        </div>
+                        <div class="product-details-price"><?php //echo $this->getChildHtml('product_type_data') ?><div class="price-box"><span><span>$0.00</span></span></div></div>
+
+                            <a class="button btn-cart add-to-cart s8" data-id="<?php echo $this->getProduct()->getId() ?>" onclick="return false" href="<?php echo $this->helper('checkout/cart')->getAddUrl($_product) ?>">Add to Cart</a>
+                  
+<!-- ================ Package Choices ================= -->
+
+                        <div class="package-choices">
+                    <div class="row"><h2>Choose Your Brush</h2></div>
+                    <div class="three column grid">
+                        
+
+
+                <?php $_productId = $_helper->productAttribute($_product, $_product->getId(), 'id'); ?>
+
+                <?php 
+                        $_configProd = Mage::getModel('catalog/product')->load($_productId);
+                        $conf = Mage::getModel('catalog/product_type_configurable')->setProduct($_configProd);
+
+
+
+                        $simple_collection = $conf->getUsedProductCollection()->addAttributeToSelect('*')->addFilterByRequiredOptions();
+
+                        // var_dump($simple_collection);
+                        $count=0;
+                        foreach($simple_collection as $simple_product){?>
+                        <?php if($count % 2 == 0) {?>
+                                <div class="column">
+                        <?php   } ?>
+                            <div class="package-choice" data-id="<?php echo $simple_product->getId() ?>" data-price="<?php echo $simple_product->getPrice() ?>" data-name="<?php echo $simple_product->getName() ?>">
+                                <img src="<?php echo $simple_product->getImageUrl(); ?>" alt="">
+                                <h3><?php echo $simple_product->getName(); ?></h3>
+                                <span class="price"><?php echo Mage::helper('core')->currency($simple_product->getPrice()); ?></span>
+                            </div>
+                            <?php if($count % 2 == 0) {?>
+                                </div>
+                            <?php } 
+                            }
+                            $count++;
+                 ?>
+
+                    </div>
+                </div>
+
+<!-- ================ Package Choices END ================= -->
+
+<!-- ================ Associated Upsells ================= -->
+
+            <div class="associated-upsells">
+                <h2>Select Accesories</h2>
+                    <div class="three column grid">
+
+<?php 
+   
+   // Get product object.
+   $object = $this->getProduct()->getUpSellProductCollection()->load();
+   $count2=0;
+   foreach ( $object as $_aproduct ) {
+    $_product = Mage::getModel('catalog/product')->load($_aproduct->getId());?>
+            <?php if($count2 % 2 == 0) {?>
+                        <div class="column">
+                <?php   } ?>
+                            <div class="associated-upsell" data-id="<?php echo $_product->getId() ?>" data-price="<?php echo $_product->getPrice() ?>" data-name="<?php echo $_product->getName() ?>">
+        
+                                <img src="<?php echo $_product ->getSmallImageUrl(); ?>" alt="">
+                                <h3><?php echo $_product ->getName(); ?></h3>
+                                <span class="price"><?php echo Mage::helper('core')->currency($_product->getPrice()); ?></span>
+                            </div>
+                <?php if($count2 % 2 == 0) {?>
+                        </div>
+                        <?php } 
+                    }
+                        $count2++;
+                        ?>
+
+                    </div>
+                </div>
+
+<!-- ================ Associated Upsells END ================= -->
+
+                        <!-- <p><?php //echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></p> -->
+                    </div>
+                    <?php echo $this->getTierPriceHtml() ?>
+                    <?php echo $this->getChildHtml('extrahint') ?>
+
+                    <?php if (!$this->hasOptions()):?>
+                                            
+                        <div class="add-to-box">
+                            <?php if($_product->isSaleable()): ?>
+                                <?php echo $this->getChildHtml('addtocart') ?>
+                            <?php endif; ?>
+                        </div>
+                        <?php echo $this->getChildHtml('extra_buttons') ?>
+                    <?php else:?>
+                        <?php if ($_product->isSaleable() && $this->hasOptions() && $this->getChildChildHtml('container1') ):?>
+                            <div class="options-container-small">
+                                <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
+                            </div>
+                        <?php endif;?>
+                    <?php endif; ?>
+
+                    <?php echo $this->getChildHtml('other');?>
+                </div>
+
+        </div>
+
+        <div class="product-collateral">
+
+            <?php foreach ($this->getChildGroup('detailed_info', 'getChildHtml') as $alias => $html):?>
+            <div class="box-collateral <?php echo "box-{$alias}"?>">
+                <?php if ($title = $this->getChildData($alias, 'title')):?>
+                <h2><?php echo $this->escapeHtml($title); ?></h2>
+                <?php endif;?>
+                <?php echo $html; ?>
+            </div>
+            <?php if ($alias == 'description'): ?>
+                <div class="product-add-to"><?php echo $this->getChildHtml('addto') ?></div>
+            <?php endif; ?>
+            <?php endforeach;?>
+
+        </div>
+        <div class="box-collateral">
+	<h3>Product Specification</h3>
+	<? echo $desct=$_product->getData('specification'); ?>
+	
+	</div>
+
+        <!-- <?php if ($_product->isSaleable() && $this->hasOptions() && $this->getChildChildHtml('container2') ):?>
+            <div class="options-container-big">
+                <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+            </div>
+        <?php endif;?> -->
+
+        
+    </form>
+<!--     <div class="box-collateral">
+    <?php// echo $this->getChildHtml('catalog.product.related') ?>
+    </div> -->
+    <?php //echo $this->getChildHtml('upsell_products') ?>
+    
+    <div class="box-collateral">
+	<? $videos=$_product->getvideos();
+		$videos_parts = explode("\n", $videos); ?>
+	<h2>Product Videos <?php if($videos_parts != 0) { ?><span>(<?php if($videos) { echo count($videos_parts); } else { echo "0"; }?>)</span><? } ?></h2>
+	<div class="product-videos-holder">
+	<?php if($videos) { ?>
+	<?php foreach($videos_parts as $video_part) : ?>
+	<div class="product-video"><? echo $video_part; ?></div>
+	<?php endforeach; ?>
+	<? } ?>
+    </div>
+
+    <?php echo $this->getChildHtml('productTagList') ?>
+    <?php echo $this->getChildHtml('product_additional_data') ?>
+</div>
+        <div class="product-review"><?php echo $this->getReviewsSummaryHtml($_product, false, true)?></div>
+
+<script type="text/javascript">
+//<![CDATA[
+    var productAddToCartForm = new VarienForm('product_addtocart_form');
+    productAddToCartForm.submit = function(button, url) {
+        if (this.validator.validate()) {
+            var form = this.form;
+            var oldUrl = form.action;
+
+            if (url) {
+               form.action = url;
+            }
+            var e = null;
+            try {
+                var transformValue = {};
+
+                if ( Modernizr.csstransforms3d ) {
+                    transformValue[Modernizr.prefixed('transform')] = 'translate3d(-82px, -106px, 2px) scale(0) rotate(200deg)';
+                } else if ( Modernizr.csstransforms ) {
+                    transformValue[Modernizr.prefixed('transform')] = 'translate(-82px, -106px) scale(0) rotate(200deg)';
+                } else {
+                    this.form.submit();
+                    return false;
+                }
+
+                var originalImg = $$('.product-image-wrap .product-image img')[0];
+                originalImg.up('.product-image-wrap').insert(originalImg.clone().addClassName('cloned'));
+
+                setTimeout(function () {
+                    $$('.cloned')[0].setStyle(transformValue);
+                }, 1);
+                $$('.product-image-wrap .cloned')[0].observe(transEndEventName, function(e) {
+                    this.form.submit();
+                }.bind(this));
+
+            } catch (e) {
+            }
+            this.form.action = oldUrl;
+            if (e) {
+                throw e;
+            }
+
+            if (button && button != 'undefined') {
+                button.disabled = true;
+            }
+        }
+    }.bind(productAddToCartForm);
+
+    productAddToCartForm.submitLight = function(button, url){
+        if(this.validator) {
+            var nv = Validation.methods;
+            delete Validation.methods['required-entry'];
+            delete Validation.methods['validate-one-required'];
+            delete Validation.methods['validate-one-required-by-name'];
+            if (this.validator.validate()) {
+                if (url) {
+                    this.form.action = url;
+                }
+                this.form.submit();
+            }
+            Object.extend(Validation.methods, nv);
+        }
+    }.bind(productAddToCartForm);
+//]]>
+</script>

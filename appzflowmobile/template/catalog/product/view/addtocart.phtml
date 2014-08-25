@@ -1,0 +1,94 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $_product = $this->getProduct(); ?>
+<?php $buttonTitle = $this->__('Add to Cart'); ?>
+<?php if($_product->isSaleable()): ?>
+    <div class="add-to-cart">
+        <?php if(!$_product->isGrouped()): ?>
+        <label for="qty"><?php echo $this->__('Qty:') ?></label>
+        <input type="text" name="qty" id="qty" maxlength="12" value="<?php echo $this->getProductDefaultQty() * 1 ?>" title="<?php echo $this->__('Qty') ?>" class="input-text qty" />
+        <?php endif; ?>
+        
+        <?php echo $this->getChildHtml('', true, true) ?>
+
+        <?
+
+
+
+        $attributeValuesShipp = Mage::getModel('catalog/product')->load($_product->getId())->getAttributeText('shipping');
+        if($attributeValuesShipp == "Free Shipping") :
+
+            ?>
+            <div class="overnight-shipping">
+                <img src="<? echo $this->getSkinUrl('img/fedex-red-truck.jpg');  ?>" />
+                <br><span>FREE<br>Shipping</span>
+            </div>
+
+        <?
+        elseif($attributeValuesShipp == "Free Overnight Shipping"): ?>
+
+            <div class="overnight-shipping">
+                <img src="<? echo $this->getSkinUrl('img/overnight-shipping.png');  ?>" />
+                <br><span>FREE<br>Overnight<br>Shipping</span>
+            </div>
+
+        <?php elseif($attributeValuesShipp == "Free Two-Day Air Shipping"): ?>
+
+            <div class="overnight-shipping">
+                <img src="<? echo $this->getSkinUrl('img/overnight-shipping.png');  ?>" />
+                <br><span>FREE<br>Two-Day<br>Air Shipping</span>
+            </div>
+
+        <?php elseif($attributeValuesShipp == "Free Three-Day Air Shipping"): ?>
+
+            <div class="overnight-shipping">
+                <img src="<? echo $this->getSkinUrl('img/overnight-shipping.png');  ?>" />
+                <br><span>FREE<br>Three-Day<br>Air Shipping</span>
+            </div>
+
+        <?	endif;
+        ?>
+        
+        	<div class="buysafeProduct">
+                <span>BuySafe</span>
+                3-in-1<br>GUARANTEE<br>
+                <div class="buysafeList">
+                <div><i class="checkmark sign icon"></i> ID Protection</div>
+                <div><i class="checkmark sign icon"></i> Purchase</div>
+                <div><i class="checkmark sign icon"></i> Lowest Price</div>
+                </div>
+            </div>
+
+
+    </div>
+        
+        <button type="button" title="<?php echo $buttonTitle ?>" class="fluid ui red button huge" onclick="productAddToCartForm.submit(this)"><i class="add sign icon"></i><?php echo $buttonTitle ?></button>
+        <?php echo $this->getChildHtml('', true, true) ?>
+    </div>
+<?php endif; ?>
+
+

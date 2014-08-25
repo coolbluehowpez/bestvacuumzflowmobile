@@ -1,0 +1,17 @@
+<?php $_categories=$this->getCurrentChildCategories(); ?>
+ <?php $_cat_name=$this->getCurrentCategory()->getName(); ?>
+<div id="category-products-listing-holder">
+ <?php foreach ($_categories as $_category): ?>
+	 <?php if($_category->getIsActive()): ?>
+<div class="category-products-box">
+<a href="<?php echo $_category->getURL() ?>">
+<?php $_image_path = Mage::getModel('catalog/category')->load($_category->getId())->getThumbnail();
+ ?>
+<img src="<?php echo Mage::getBaseUrl('media').'catalog/category/'.$_image_path;  ?>" width="100"/>
+<h2><?php echo $this->htmlEscape($_category->getName()) ?></h2>
+
+</a>
+</div> 
+<?php endif; ?>
+    <?php endforeach; ?>
+</div>

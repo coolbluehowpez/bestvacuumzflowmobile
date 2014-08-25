@@ -1,0 +1,182 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_iphone
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<div class="page-title">
+    <h1><?php echo $this->__('Your order has been received') ?></h1>
+</div>
+<div class="checkout-success">
+    <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+    <h2 class="sub-title"><?php echo $this->__('Thank you for your purchase!') ?></h2>
+
+    <?php if ($this->getOrderId()):?>
+        <?php if ($this->getCanViewOrder()) :?>
+            <p><?php echo $this->__('Your order # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getViewOrderUrl()), $this->escapeHtml($this->getOrderId()))) ?></p>
+        <?php  else :?>
+            <p><?php echo $this->__('Your order # is: %s.', $this->escapeHtml($this->getOrderId())) ?></p>
+        <?php endif;?>
+            <p><?php echo $this->__('You will receive an order confirmation email with details of your order and a link to track its progress.') ?></p>
+        <?php if ($this->getCanViewOrder() && $this->getCanPrintOrder()) :?>
+            <p>
+                <?php echo $this->__('Click <a href="%s" onclick="this.target=\'_blank\'">here to print</a> a copy of your order confirmation.', $this->getPrintUrl()) ?>
+                <?php echo $this->getChildHtml() ?>
+            </p>
+        <?php endif;?>
+   	<?php endif;?>
+
+    <?php if ($this->getAgreementRefId()): ?>
+        <p><?php echo $this->__('Your billing agreement # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getAgreementUrl()), $this->escapeHtml($this->getAgreementRefId())))?></p>
+    <?php endif;?>
+
+    <?php if ($profiles = $this->getRecurringProfiles()):?>
+    <p><?php echo $this->__('Your recurring payment profiles:'); ?></p>
+    <ul class="disc">
+    <?php foreach($profiles as $profile):?>
+    <?php $profileIdHtml = ($this->getCanViewProfiles() ? sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getProfileUrl($profile)), $this->escapeHtml($this->getObjectData($profile, 'reference_id'))) : $this->escapeHtml($this->getObjectData($profile, 'reference_id')));?>
+        <li><?php echo $this->__('Payment profile # %s: "%s".', $profileIdHtml, $this->escapeHtml($this->getObjectData($profile, 'schedule_description')))?></li>
+    <?php endforeach;?>
+    </ul>
+    <?php endif;?>
+
+    <div class="buttons-set">
+        <button type="button" class="button" title="<?php echo $this->__('Continue Shopping') ?>" onclick="window.location='<?php echo $this->getUrl() ?>'"><span><span><?php echo $this->__('Continue Shopping') ?></span></span></button>
+    </div>
+</div>
+
+<?php 
+$lastOrderId = Mage::getSingleton('checkout/session')->getLastOrderId();
+$order = Mage::getSingleton('sales/order');
+$order->load($lastOrderId);
+ 
+$order = Mage::getModel('sales/order')->load($lastOrderId);
+foreach ($order->getAllItems() as $item) {
+        $productArray[] = array(
+                "product_sku" => $item->getSku(),
+                "product_magento_id" => $item->getProductId(),
+                "product_name" => $item->getName(),
+                "product_qty" => $item->getQtyOrdered(),
+                "product_price" => $item->getPrice(),
+                "product_discount_amount" => $item->getDiscountAmount(),
+                "product_row_price" => $item->getPrice() - $item->getDiscountAmount(),
+                 );
+
+        };
+?>
+
+<?php
+$_totalData = $order->getData();
+$_subtotal = $_totalData['subtotal'];
+$_orderID = $_totalData['increment_id'];
+
+?>
+<img src="https://www.pricegrabber.com/conversion.php?retid=3095<?php $i=1; foreach ($order->getAllItems() as $item) {?>&item<? echo $i; ?>=||<? echo $item->getPrice(); ?>|<? echo $item->getSku(); ?>|<?php echo Mage::getResourceModel('catalog/product')->getAttributeRawValue($item->getProductId(), 'upc', 1); ?>|<? echo (int)($item->getQtyOrdered()); ?><? $i++;   }; ?>">
+
+<?php
+$buySAFE_order  = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId());
+$buySAFE_amount = number_format($buySAFE_order->getGrandTotal(),2);
+$buySAFE_email  = $buySAFE_order->getCustomerEmail();
+
+?>
+
+ 
+<!-- BEGIN: buySAFE Guarantee -->
+<span id="BuySafeGuaranteeSpan"></span>
+<script src="https://seal.buysafe.com/private/rollover/rollover.js"></script>
+<script type="text/javascript">
+   buySAFE.Hash = 'MKWIv6qwbAQ6pLQPaPAN9Q3pEo9VGJNpBGdg%2B6%2Ftogho2223yI%2BXTit4kj%2FXOrwnhK9mC19rtQSkZaTc9FNnYg%3D%3D';
+   buySAFE.Guarantee.hidden = 1;
+   buySAFE.Guarantee.order = '<?php echo $this->getOrderId() ?>'; //Order Number
+   buySAFE.Guarantee.total = '<?php echo $buySAFE_amount; ?>'; // Order Amount
+   buySAFE.Guarantee.email = '<?php echo $buySAFE_email; ?>';
+   WriteBuySafeGuarantee("JavaScript");
+</script>
+
+<!-- END: buySAFE Guarantee -->
+
+<!-- BEGIN Google Code for Purchase/Sale Conversion Page -->
+<!-- 
+<script type="text/javascript">
+/* <![CDATA[ */
+var google_conversion_id = 1072727690;
+var google_conversion_language = "en";
+var google_conversion_format = "1";
+var google_conversion_color = "666666";
+var google_conversion_label = "WcKHCNL8PhCKjcL_Aw";
+var google_conversion_value = 0;
+/* ]]> */
+</script>
+<script type="text/javascript" src="http://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<div style="display:inline;">
+<img height="1" width="1" style="border-style:none;" alt="Google Ad Services" src="http://www.googleadservices.com/pagead/conversion/1072727690/?value=0&amp;label=WcKHCNL8PhCKjcL_Aw&amp;guid=ON&amp;script=0"/>
+</div>
+</noscript>
+ -->
+
+<!-- END Google Code for Purchase/Sale Conversion Page -->
+
+<!-- Begin ALTERNATE Google Conversion Code -->
+<script language="JavaScript">
+<!--
+google_conversion_id = 1072727690;
+google_conversion_language = "en_US";
+var Total_Cost
+Total_Cost = '<?php echo $_subtotal; ?>';
+if (Total_Cost) {
+  google_conversion_value = Total_Cost;
+}
+google_conversion_label = "Purchase";
+//-->
+</script>
+<script language="JavaScript" src="https://www.googleadservices.com/pagead/conversion.js">
+</script>
+<noscript>
+<a href="https://services.google.com/sitestats/en_US.html" target=_blank>
+<img height=27 width=135 border=0 src="https://www.googleadservices.com/pagead/conversion/1072727690/?value=Total_Cost&label=Purchase&hl=en">
+</a>
+</noscript>	
+<!-- END ALTERNATE Google Code for Purchase/Sale Conversion Page -->
+
+<!-- Begin Bing Conversion Code -->
+<script type="text/javascript"> if (!window.mstag) mstag = {loadTag : function(){},time : (new Date()).getTime()};</script> <script id="mstag_tops" type="text/javascript" src="//flex.atdmt.com/mstag/site/fde3bf36-eb8e-4ff0-9428-8279b5d34224/mstag.js"></script> <script type="text/javascript"> mstag.loadTag("analytics", {dedup:"1",domainId:"71587",type:"1",revenue:"<?php echo $_subtotal; ?>",actionid:"105520"})</script> <noscript> <iframe src="//flex.atdmt.com/mstag/tag/fde3bf36-eb8e-4ff0-9428-8279b5d34224/analytics.html?dedup=1&domainId=71587&type=1&revenue=&actionid=105520" frameborder="0" scrolling="no" width="1" height="1" style="visibility:hidden;display:none"> </iframe> </noscript>
+<!-- END Bing Code for Purchase/Sale Conversion Page -->
+
+
+<!-- Begin GoDataFeed Code -->
+<?php 
+    $order = Mage::getModel('sales/order')->loadByIncrementId(Mage::getSingleton('checkout/session')->getLastRealOrderId());  
+	$amount = number_format($order->getGrandTotal(),2);  
+?>
+<script language="javascript" type="text/javascript">var gdf_orderTotal = '<?php echo $amount; ?>';</script> 
+<script language="javascript" type="text/javascript" src="https://tracking.godatafeed.com/gdf_conversion.js"></script> 
+ 
+<!-- End GoDataFeed Code -->
+
+
+<!-- Start ShopperApproved Survey Code -->
+<div id="outer_shopper_approved"></div><script type="text/javascript"> var sa_values = { 'site':8624 }; function saLoadScript(src) { var js = window.document.createElement("script"); js.src = src; js.type = "text/javascript"; document.getElementsByTagName("head")[0].appendChild(js); } var d = new Date(); if (d.getTime() - 172800000 > 1401289624000) saLoadScript("//www.shopperapproved.com/thankyou/inline/8624.js"); else saLoadScript("//direct.shopperapproved.com/thankyou/inline/8624.js?d=" + d.getTime()); </script>
+<!-- End ShopperApproved Survey Code -->
+
