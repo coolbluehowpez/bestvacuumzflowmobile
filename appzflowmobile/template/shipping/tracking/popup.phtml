@@ -41,7 +41,7 @@
             <?php if(is_object($track)): ?>
             <tr>
                 <td class="first label"><?php echo $this->__('Tracking Number:'); ?></td>
-                <td><?php echo $track->getTracking(); ?></td>
+                <td class="value"><a href="https://www.fedex.com/fedextrack/index.html?tracknumbers=<?php echo $this->escapeHtml($track->getTracking()); ?>&cntry_code=us" target="_blank" style="color:red;"><?php echo $this->escapeHtml($track->getTracking()); ?></a> (Click Number to Track)</td>
             </tr>
             <?php if ($track->getCarrierTitle()): ?>
             <tr>
@@ -51,8 +51,8 @@
             <?php endif; ?>
             <?php if($track->getErrorMessage()): ?>
             <tr>
-                <td class="first label"><?php echo $this->__('Error:'); ?></td>
-                <td class="error"><?php echo $this->__('Tracking information is currently not available. Please '); if ($this->getContactUsEnabled()) : ?><a href="<?php echo $this->getContactUs() ?>" onclick="this.target='_blank'"><?php echo $this->__('contact us') ?></a><?php echo $this->__(' for more information or '); endif; echo $this->__('email us at '); ?><a href="mailto:<?php echo $this->getStoreSupportEmail() ?>"><?php echo $this->getStoreSupportEmail() ?></a></td>
+                <td class="first label"></td>
+                <td class="error"></td>
             </tr>
             <?php elseif($track->getTrackSummary()): ?>
             <tr>

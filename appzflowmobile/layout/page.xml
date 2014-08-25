@@ -47,7 +47,6 @@ Default layout, loads most of the pages
                 <action method="addJs"><script>varien/form.js</script></action>
                 <action method="addJs"><script>mage/translate.js</script></action>
                 <action method="addJs"><script>mage/cookies.js</script></action>
-                <action method="addJs"><script>bestvacum/jquery-1.7.1.min.js</script></action>
 
                 <block type="page/js_cookie" name="js_cookies" template="page/js/cookie.phtml"/>
 
@@ -56,7 +55,6 @@ Default layout, loads most of the pages
                 <action method="addItem"><type>skin_js</type><name>js/modernizr.js</name></action>
                 <action method="addItem"><type>skin_js</type><name>js/iphone.js</name></action>
                 <action method="addItem"><type>skin_js</type><name>js/dnd.js</name></action>
-                <action method="addItem"><type>skin_js</type><name>js/s8.mobile.js</name></action>
 				
                 <action method="addCss"><stylesheet>css/iphone.css</stylesheet></action>
                 <action method="addCss"><stylesheet>css/custom.css</stylesheet></action>
